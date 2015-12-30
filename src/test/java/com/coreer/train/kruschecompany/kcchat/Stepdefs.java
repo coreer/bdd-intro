@@ -6,6 +6,8 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by aieremenko on 12/30/15.
@@ -25,7 +27,16 @@ public class Stepdefs {
 
     @When("^any of them sends some message$")
     public void any_of_them_sends_some_message() throws Throwable {
+        final User anyUser = getRandomUser(chat);
+        anyUser.broadcast("Hi all!");
+    }
 
+    private User getRandomUser(Chat chat) {
+        List<User> users = chat.getUsers();
+        final int usersCount = users.size();
+        final Random random = new Random();
+        final int ramdomUserIndex = random.ints(0, usersCount).findFirst().getAsInt();
+        return users.get(ramdomUserIndex);
     }
 
     @Then("^everyone should see the message in Global Chat$")

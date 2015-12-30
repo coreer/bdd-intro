@@ -6,4 +6,8 @@ package com.coreer.train.kruschecompany.kcchat;
 public class User {
     public User(String nickname) {
     }
+
+    public void broadcast(String s) {
+
+    }
 }
