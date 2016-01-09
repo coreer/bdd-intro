@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.coreer.train.kruschecompany</groupId>
-    <artifactId>kc-chat</artifactId>
+    <artifactId>kc-chatRoom</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
     <name>KC Chat</name>
@@ -13,6 +13,7 @@
         <junit.version>4.12</junit.version>
         <cucumber.version>1.2.4</cucumber.version>
         <maven.compiler.version>3.3</maven.compiler.version>
+        <mockito.core.version>1.10.19</mockito.core.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
