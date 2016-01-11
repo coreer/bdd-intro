@@ -4,12 +4,13 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 
 /**
  * Created by aieremenko on 12/30/15.
@@ -29,17 +30,18 @@ public class Stepdefs {
     private List<User> userListOfChatCreatedBySomeUser;
 
 
-
-
-    @Given("^there are several users added to Company Room$")
-    public void there_are_several_users_added_to_Company_Room() throws Throwable {
-        chatRoom = new ChatRoom(admin);
-        final User skywokker = new Member("Skywokker", chatRoom);
-        final User obione = new Member("Obione", chatRoom);
-        final User yoda = new Member("Yoda", chatRoom);
-        final User[] users = {skywokker, obione, yoda};
-        chatRoom.addUsers(Arrays.asList(users));
+    public static class ChatUser {
+        public String nickname;
+        public String email;
     }
+
+    @Given("^there are several users added to Company Room:$")
+    public void there_are_several_users_added_to_Company_Room(List<ChatUser> users) throws Throwable {
+        chatRoom = new ChatRoom(admin);
+        final List<User> chatRoomMemebers = users.stream().map(user -> new Member(user.nickname, chatRoom)).collect(Collectors.toList());
+        chatRoom.addUsers(chatRoomMemebers);
+    }
+
 
     @When("^any of them sends some message$")
     public void any_of_them_sends_some_message() throws Throwable {
@@ -91,6 +93,20 @@ public class Stepdefs {
 
             assertThat(lastMsg.getAuthor(), is(someUser));
             assertThat(lastMsg.getContent(), is(CHAT_MSG));
+        }
+    }
+
+
+    @Then("^users who are not in this group should not see the message$")
+    public void users_who_are_not_in_this_group_should_not_see_the_message() throws Throwable {
+        final List<User> usersNotInChatCreatedBySomeUser = chatRoom.getUsers().stream().filter(
+                user -> !userListOfChatCreatedBySomeUser.contains(user)
+        ).collect(Collectors.toList());
+
+        for (final User user : usersNotInChatCreatedBySomeUser) {
+            final Message lastMsg = user.getChatHistory(CHAT_NAME).last();
+
+            assertThat(lastMsg, is(nullValue()));
         }
     }
 

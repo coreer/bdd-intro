@@ -13,7 +13,14 @@ Feature: Broadcast messages
   -
 
   Background:
-    Given there are several users added to Company Room
+    Given there are several users added to Company Room:
+      | nickname  | email               |
+      | Skywokker | skw@gmail.com       |
+      | Obione    | obyone@yahoo.com    |
+      | Yoda      | yoda@nirvana.org    |
+      | Leia      | leia@shopping.com   |
+      | Jabba     | jabba@foodcourt.com |
+
 
   Scenario: Broadcasting messages in global chat
     When any of them sends some message
@@ -25,3 +32,4 @@ Feature: Broadcast messages
     And the one adds there several users from Company Room
     When creator of the group sends a message
     Then everyone sees the message in this chat of the group
+    And users who are not in this group should not see the message
