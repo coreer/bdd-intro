@@ -6,12 +6,12 @@ import java.util.List;
 /**
  * Created by aieremenko on 12/31/15.
  */
-//@todo Builder of this class instances should always provide History instance for each of these
+//@todo Builder of this class instances should always provide ChatHistory instance for each of these
 public class Chat {
     private String name;
     private final User creator;
     private final List<User> attendees = new ArrayList<>();
-    private History history;
+    private ChatHistory history;
 
 
     public Chat(final String name, final User creator, final List<User> attendees) {
@@ -29,6 +29,10 @@ public class Chat {
         }
     }
 
+    public List<User> getAttendees() {
+        return attendees;
+    }
+
     public User getCreator() {
         return creator;
     }
@@ -37,11 +41,11 @@ public class Chat {
         return name;
     }
 
-    public History getHistory() {
+    public ChatHistory getHistory() {
         return history;
     }
 
-    public void setHistory(History history) {
+    public void setHistory(ChatHistory history) {
         this.history = history;
     }
 }

@@ -14,6 +14,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by aieremenko on 12/30/15.
@@ -22,7 +24,7 @@ public class ChatRoomTest {
     /**
      * - create ChatRoom from only admin of it
      * - when we add users to ChatRoom make sure that we don't need anything additional to do with users!
-    */
+     */
 
     @Test
     public void shouldCreateChatRoomOnlyFromAdmin() {
@@ -129,26 +131,23 @@ public class ChatRoomTest {
         assertThat(globalChat.getHistory(), not(nullValue()));
     }
 
-    /*@Test
-    public void shouldStoreInHistoryAllBroadcastedMessagesCombinedWithSenderName() {
-        final User creator = mock(User.class);
-        final ChatRoom chatRoom = new ChatRoom(creator, new ArrayList<>());
+    @Test
+    public void should_make_creatorAndAttandees_toAttendIn_createdChat() {
+        final List<User> firstGroupOfUsers = firstGroupOfUsers();
+        final ChatRoom chatRoom = new ChatRoom(mock(User.class), firstGroupOfUsers);
+        final List<User> secondGroupOfUsers = secondGroupOfUsers();
+        chatRoom.addUsers(secondGroupOfUsers);
+        User chatCreator = mock(User.class);
 
-        final User skywokker = mock(User.class);
-        final User obione = mock(User.class);
-        final User yoda = mock(User.class);
+        final Chat chat = chatRoom.createChat("chat name", chatCreator, secondGroupOfUsers);
 
-        final String skywokkerName = "Skywokker";
-        when(skywokker.getNickname()).thenReturn(skywokkerName);
-        final String obioneName = "Obione";
-        when(obione.getNickname()).thenReturn(obioneName);
-        final String yodaName = "Yoda";
-        when(yoda.getNickname()).thenReturn(yodaName);
+        verify(chatCreator).attend(chat);
+        for(User user : secondGroupOfUsers) {
+            verify(user).attend(chat);
+        }
+        for(User user : firstGroupOfUsers) {
+            verify(user, never()).attend(chat);
+        }
+    }
 
-        chatRoom.broadcast("Message", obione);
-
-        final List<User> users = Arrays.asList(new User[]{skywokker, obione, yoda});
-        chatRoom.addUsers(users);
-
-    } */
 }

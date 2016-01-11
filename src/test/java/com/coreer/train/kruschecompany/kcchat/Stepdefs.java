@@ -1,6 +1,5 @@
 package com.coreer.train.kruschecompany.kcchat;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -17,9 +16,20 @@ import static org.hamcrest.core.Is.is;
  */
 public class Stepdefs {
     public static final String BROADCAST_MESSAGE = "Hi all!";
+    public static final String CHAT_NAME = "someUserChat";
+    public static final String CHAT_MSG = "hi my fiends!";
+
     private ChatRoom chatRoom;
+
     private User anyUser;
     private User admin = new Admin("admin");
+
+    private User someUser;
+    private Chat chatCreatedBySomeUser;
+    private List<User> userListOfChatCreatedBySomeUser;
+
+
+
 
     @Given("^there are several users added to Company Room$")
     public void there_are_several_users_added_to_Company_Room() throws Throwable {
@@ -59,26 +69,29 @@ public class Stepdefs {
 
     @Given("^some user creates chat group$")
     public void some_user_creates_chat_group() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        someUser = new Member("someUser", chatRoom);
+        userListOfChatCreatedBySomeUser = chatRoom.getUsers().subList(0,1);
+        chatCreatedBySomeUser = chatRoom.createChat(CHAT_NAME, someUser, userListOfChatCreatedBySomeUser);
     }
 
     @Given("^the one adds there several users from Company Room$")
     public void the_one_adds_there_several_users_from_Company_Room() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        //added at the same place where created
     }
 
     @When("^creator of the group sends a message$")
     public void creator_of_the_group_sends_a_message() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        someUser.broadcast(chatCreatedBySomeUser, CHAT_MSG);
     }
 
     @Then("^everyone sees the message in this chat of the group$")
     public void everyone_sees_the_message_in_this_chat_of_the_group() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+        for (final User user : userListOfChatCreatedBySomeUser) {
+            final Message lastMsg = user.getChatHistory(CHAT_NAME).last();
+
+            assertThat(lastMsg.getAuthor(), is(someUser));
+            assertThat(lastMsg.getContent(), is(CHAT_MSG));
+        }
     }
 
 }

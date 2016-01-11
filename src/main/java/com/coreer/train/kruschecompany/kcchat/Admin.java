@@ -1,5 +1,7 @@
 package com.coreer.train.kruschecompany.kcchat;
 
+import java.util.List;
+
 /**
  * Created by aieremenko on 12/31/15.
  */
@@ -12,12 +14,17 @@ public class Admin implements User {
     }
 
     @Override
-    public void attend(Chat chat) {
-
+    public Chat attend(Chat chat) {
+        return chat;
     }
 
     @Override
-    public History getGlobalChatHistory() {
+    public ChatHistory getGlobalChatHistory() {
+        return null;
+    }
+
+    @Override
+    public History getChatHistory(String chatName) {
         return null;
     }
 
@@ -34,6 +41,16 @@ public class Admin implements User {
     @Override
     public void handleMessageEvent(Chat chat, Message capture) {
 
+    }
+
+    @Override
+    public Chat getChat(String chatName) {
+        return null;
+    }
+
+    @Override
+    public Chat createChat(String chatName, List<User> attandees) {
+        return null;
     }
 }
 

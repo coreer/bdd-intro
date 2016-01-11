@@ -15,9 +15,9 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by aieremenko on 12/31/15.
  */
-public class HistoryTest {
+public class ChatHistoryTest {
 
-    History history;
+    ChatHistory history;
     Message msg1;
     Message msg2;
     Message msg3;
@@ -27,7 +27,7 @@ public class HistoryTest {
     @Before
     public void init() {
         final Chat chat = mock(Chat.class);
-        history = new History(chat);
+        history = new ChatHistory(chat);
 
         final User creator = mock(User.class);
         final User skywokker = mock(User.class);

@@ -44,7 +44,7 @@ public class ChatTest {
         User attendee2 = mock(User.class);
 
         final Chat chat = new Chat("My chat", creator, Arrays.asList(new User[]{attendee1, attendee2}));
-        final History history = mock(History.class);
+        final ChatHistory history = mock(ChatHistory.class);
         chat.setHistory(history);
 
         final String msg = "Message from!";
@@ -70,7 +70,7 @@ public class ChatTest {
         User attendee2 = mock(User.class);
 
         final Chat chat = new Chat("My chat", creator, Arrays.asList(new User[]{attendee1, attendee2}));
-        final History history = mock(History.class);
+        final ChatHistory history = mock(ChatHistory.class);
         chat.setHistory(history);
 
         final String msg = "Message from!";

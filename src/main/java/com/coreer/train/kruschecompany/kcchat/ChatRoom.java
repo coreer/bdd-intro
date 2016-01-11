@@ -39,7 +39,7 @@ public class ChatRoom {
         return globalChat;
     }
 
-    public History getBroadcastingHistory() {
+    public ChatHistory getBroadcastingHistory() {
         return globalChat.getHistory();
     }
 
@@ -49,9 +49,12 @@ public class ChatRoom {
 
     public Chat createChat(String chatName, User creator, List<User> attendees) {
         final Chat chat = new Chat(chatName, creator, attendees);
-        chat.setHistory(new History(chat));
-
+        chat.setHistory(new ChatHistory(chat));
         chats.put(chatName, chat);
+
+        for(User attendee : chat.getAttendees()) {
+            attendee.attend(chat);
+        }
 
         return chat;
     }
