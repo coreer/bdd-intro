@@ -12,15 +12,16 @@ Feature: Broadcast messages
   Questions:
   -
 
-  Scenario: Broadcasting messages in global chat
+  Background:
     Given there are several users added to Company Room
+
+  Scenario: Broadcasting messages in global chat
     When any of them sends some message
     Then everyone should see the message in Global Chat
 
 
   Scenario: Broadcasting messages in chat group from creator
-    Given there are several users added to Company Room
-    And some user creates chat group
+    Given some user creates chat group
     And the one adds there several users from Company Room
     When creator of the group sends a message
     Then everyone sees the message in this chat of the group
