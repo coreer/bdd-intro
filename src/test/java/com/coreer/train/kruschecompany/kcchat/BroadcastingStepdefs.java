@@ -1,0 +1,119 @@
+package com.coreer.train.kruschecompany.kcchat;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+
+/**
+ * Created by aieremenko on 12/30/15.
+ */
+public class BroadcastingStepdefs {
+
+
+    private ChatRoom chatRoom;
+
+    private User admin = new Admin("admin");
+
+    private User anyUser;
+
+    private User senderInCurrentPrivateGroupChat;
+    private Chat currentPrivateGroupChat;
+
+
+
+    public static class ChatRoomUser {
+        public String nickname;
+        public String email;
+    }
+
+    @Given("^there are several users added to Company Room:$")
+    public void there_are_several_users_added_to_Company_Room(List<ChatRoomUser> users) throws Throwable {
+        chatRoom = new ChatRoom(admin);
+        final List<User> chatRoomMemebers = users.stream().map(user -> new Member(user.nickname, chatRoom)).collect(Collectors.toList());
+        chatRoom.addUsers(chatRoomMemebers);
+    }
+
+    public static class PrivateGroupChat {
+        public String chatName;
+        public String creator;
+        public String members;
+    }
+
+    @Given("^there are several created private group chats:$")
+    public void there_are_several_created_private_group_chats(List<PrivateGroupChat> privateGroupChats) throws Throwable {
+
+        privateGroupChats.stream().forEach(privateGroupChat -> {
+            final List<String> memberUsernames = Arrays.asList(privateGroupChat.members.split(","));
+            final List<User> memebers = chatRoom.getUsers().stream()
+                    .filter(user -> memberUsernames.contains(user.getNickname()))
+                    .collect(Collectors.toList());
+            final User creator = chatRoom.getUser(privateGroupChat.creator);
+            creator.createChat(privateGroupChat.chatName, memebers);
+        });
+    }
+
+
+    @When("^(.*?) of them sends some (.*?) in Global Chat$")
+    public void any_of_them_sends_some_message_in_Global_Chat(String nickname, String message) throws Throwable {
+        anyUser = chatRoom.getUser(nickname);
+        anyUser.broadcast(message);
+    }
+
+
+    @Then("^everyone should see the (.*?) in Global Chat$")
+    public void everyone_should_see_the_message_in_Global_Chat(String message) throws Throwable {
+        final List<User> users = chatRoom.getUsers();
+        for (User user : users) {
+            History globalChatHistory = user.getGlobalChatHistory();
+            Message lastMassageFromHistory = globalChatHistory.last();
+
+            assertThat(lastMassageFromHistory.getAuthor(), is(anyUser));
+            assertThat(lastMassageFromHistory.getContent(), is(message));
+        }
+    }
+
+    @When("^(.*?) from (.*?) sends a (.*?)$")
+    public void someone_from_private_group_chat_sends_a_message(
+            String senderName, String privateGroupChatName, String message) {
+        senderInCurrentPrivateGroupChat = chatRoom.getUser(senderName);
+        currentPrivateGroupChat = chatRoom.getChat(privateGroupChatName);
+        senderInCurrentPrivateGroupChat.broadcast(currentPrivateGroupChat, message);
+    }
+
+
+
+    @Then("^everyone sees the (.*?) in the (.*?)$")
+    public void everyone_sees_the_message_in_the_private_group_chat(String message, String privateGroupChat) throws Throwable {
+        final Chat chat = chatRoom.getChat(privateGroupChat);
+        chat.getAttendees().stream().forEach(u -> {
+            final Message lastMsg = u.getChatHistory(privateGroupChat).last();
+            assertThat(lastMsg.getContent(), is(message));
+            assertThat(lastMsg.getAuthor(), is(senderInCurrentPrivateGroupChat));
+        });
+    }
+
+
+    @Then("^users who are not in this group should not see the (.*?)$")
+    public void users_who_are_not_in_this_group_should_not_see_the_message(String message) throws Throwable {
+        final List<User> attendees = currentPrivateGroupChat.getAttendees();
+        final List<User> usersNotInChatCreatedBySomeUser = chatRoom.getUsers().stream().filter(
+                user -> !attendees.contains(user)
+        ).collect(Collectors.toList());
+
+        for (final User user : usersNotInChatCreatedBySomeUser) {
+            final History chatHistory = user.getChatHistory(currentPrivateGroupChat.getName());
+
+            assertThat(chatHistory, instanceOf(NullHistory.class));
+        }
+    }
+
+
+}

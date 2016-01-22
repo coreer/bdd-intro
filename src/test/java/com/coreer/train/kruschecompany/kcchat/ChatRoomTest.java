@@ -1,5 +1,6 @@
 package com.coreer.train.kruschecompany.kcchat;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -13,14 +14,39 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by aieremenko on 12/30/15.
  */
 public class ChatRoomTest {
+
+    public static final String USER1_NAME = "Skywalker";
+    public static final String USER2_NAME = "ObiWan";
+    public static final String USER3_NAME = "Yoda";
+    public static final String USER4_NAME = "Dart";
+    public static final String USER5_NAME = "Sirius";
+    public static User skywalker;
+    public static User obiWan;
+    public static User yoda;
+    public static User dart;
+    public static User sirius;
+
+
+    @BeforeClass
+    public static void setUp() {
+        skywalker = mock(User.class);
+        obiWan = mock(User.class);
+        yoda = mock(User.class);
+        dart = mock(User.class);
+        sirius = mock(User.class);
+        when(skywalker.getNickname()).thenReturn(USER1_NAME);
+        when(obiWan.getNickname()).thenReturn(USER2_NAME);
+        when(yoda.getNickname()).thenReturn(USER3_NAME);
+        when(dart.getNickname()).thenReturn(USER4_NAME);
+        when(sirius.getNickname()).thenReturn(USER5_NAME);
+    }
+
     /**
      * - create ChatRoom from only admin of it
      * - when we add users to ChatRoom make sure that we don't need anything additional to do with users!
@@ -45,19 +71,11 @@ public class ChatRoomTest {
     }
 
     private List<User> firstGroupOfUsers() {
-        final User skywokker = mock(User.class);
-        final User obione = mock(User.class);
-        final User yoda = mock(User.class);
-
-        final List<User> users = Arrays.asList(new User[]{skywokker, obione, yoda});
+        final List<User> users = Arrays.asList(new User[]{skywalker, obiWan, yoda});
         return users;
     }
 
     private List<User> secondGroupOfUsers() {
-        final User dart = mock(User.class);
-        final User sirius = mock(User.class);
-
-
         final List<User> users = Arrays.asList(new User[]{dart, sirius});
         return users;
     }
@@ -148,6 +166,17 @@ public class ChatRoomTest {
         for(User user : firstGroupOfUsers) {
             verify(user, never()).attend(chat);
         }
+    }
+
+    @Test
+    public void should_find_user_by_name() {
+        final List<User> firstGroupOfUsers = firstGroupOfUsers();
+
+        final ChatRoom chatRoom = new ChatRoom(mock(User.class), firstGroupOfUsers);
+
+        final User isUser2 = chatRoom.getUser(USER2_NAME);
+
+        assertThat(isUser2, is(obiWan));
     }
 
 }

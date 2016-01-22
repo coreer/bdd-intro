@@ -30,14 +30,14 @@ public class ChatHistoryTest {
         history = new ChatHistory(chat);
 
         final User creator = mock(User.class);
-        final User skywokker = mock(User.class);
-        final User obione = mock(User.class);
+        final User skywalker = mock(User.class);
+        final User obiWan = mock(User.class);
         final User yoda = mock(User.class);
 
         msg1 = new Message(creator, "Hi from Creator");
         msg2 = new Message(yoda, "Hi from Yoda!");
-        msg3 = new Message(skywokker, "Hi from Skywokker!");
-        msg4 = new Message(obione, "Hi from Obione!");
+        msg3 = new Message(skywalker, "Hi from Skywalker!");
+        msg4 = new Message(obiWan, "Hi from Obi-wan!");
 
         history.add(msg1);
         history.add(msg2);

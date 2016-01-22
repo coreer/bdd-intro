@@ -66,4 +66,8 @@ public class ChatRoom {
     public User getAdmin() {
         return admin;
     }
+
+    public User getUser(String nickname) {
+        return users.stream().filter(u -> nickname.equals(u.getNickname())).findFirst().get();
+    }
 }

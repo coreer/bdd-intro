@@ -14,22 +14,41 @@ Feature: Broadcast messages
 
   Background:
     Given there are several users added to Company Room:
-      | nickname  | email               |
-      | Skywokker | skw@gmail.com       |
-      | Obione    | obyone@yahoo.com    |
-      | Yoda      | yoda@nirvana.org    |
-      | Leia      | leia@shopping.com   |
-      | Jabba     | jabba@foodcourt.com |
+      | nickname    | email                 |
+      | Skywalker   | skw@gmail.com         |
+      | Obi-wan     | obyone@yahoo.com      |
+      | Yoda        | yoda@nirvana.org      |
+      | Leia        | leia@shopping.com     |
+      | Jabba       | jabba@foodcourt.com   |
+      | Darth Vader | vader@hotgirl.com     |
+      | Kylo Ren    | kylo.ren@hotgirls.com |
+    And there are several created private group chats:
+      | chat name     | creator   | members                     |
+      | Good guys     | Skywalker | Obi-wan,Yoda,Leia           |
+      | Train group   | Yoda      | Obi-wan,Skywalker,Leia      |
+      | Bad guys      | Kylo Ren  | Darth Vader,Jabba           |
+      | Strange group | Jabba     | Obi-wan,Yoda,Leia,Skywalker |
 
 
-  Scenario: Broadcasting messages in global chat
-    When any of them sends some message
-    Then everyone should see the message in Global Chat
+  Scenario Outline: Broadcasting messages in global chat
+    When <any user> of them sends some <message> in Global Chat
+    Then everyone should see the <message> in Global Chat
+    Examples:
+      | any user | message               |
+      | Jabba    | Kva-kva               |
+      | Obi-wan  | Let's get out of here |
+      | Yoda     | The force awakens     |
 
 
-  Scenario: Broadcasting messages in chat group from creator
-    Given some user creates chat group
-    And the one adds there several users from Company Room
-    When creator of the group sends a message
-    Then everyone sees the message in this chat of the group
-    And users who are not in this group should not see the message
+  Scenario Outline: Broadcasting messages in private group chat
+    When <someone> from <private group chat> sends a <message>
+    Then everyone sees the <message> in the <private group chat>
+    And users who are not in this group should not see the <message>
+    Examples:
+      | private group chat | someone   | message                                         |
+      | Good guys          | Skywalker | vse propalo!                                    |
+      | Good guys          | Yoda      | Zakroj rot!                                     |
+      | Train group        | Yoda      | Tryapki soberites'!                             |
+      | Bad guys           | Kylo Ren  | I wanna some money and you will get their plans |
+      | Strange group      | Leia      | Let's avenge!                                   |
+
