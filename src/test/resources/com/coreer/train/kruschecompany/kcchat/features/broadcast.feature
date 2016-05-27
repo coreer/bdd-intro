@@ -52,3 +52,9 @@ Feature: Broadcast messages
       | Bad guys           | Kylo Ren  | I wanna some money and you will get their plans |
       | Strange group      | Leia      | Let's avenge!                                   |
 
+
+  Scenario: Any user can create private chat
+    When random user creates private chat
+    Then the user can add any other users of Company Room to the chat
+    And these users can read messages there from each other
+    But users, whos are not members, cannot read the messages
