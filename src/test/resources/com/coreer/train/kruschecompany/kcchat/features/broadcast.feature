@@ -54,7 +54,7 @@ Feature: Broadcast messages
 
 
   Scenario: Any user can create private chat
-    When random user creates private chat
-    Then the user can add any other users of Company Room to the chat
+    When Yoda creates private chat with name Tsirkuem
+    Then Yoda adds Skywalker, Jabba and Obi-wan to the chat
     And these users can read messages there from each other
-    But users, whos are not members, cannot read the messages
+    But users, who are not members, cannot read the messages
