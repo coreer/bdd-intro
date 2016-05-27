@@ -1,16 +1,19 @@
 package com.coreer.train.kruschecompany.kcchat;
 
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import org.apache.commons.lang3.RandomStringUtils;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 /**
  * Created by aieremenko on 12/30/15.
@@ -27,6 +30,8 @@ public class BroadcastingStepdefs {
     private User senderInCurrentPrivateGroupChat;
     private Chat currentPrivateGroupChat;
 
+    private List<User> applicantsForCurrentPrivateChat;
+    private List<Message> someMessagesOfApplicants;
 
 
     public static class ChatRoomUser {
@@ -89,7 +94,6 @@ public class BroadcastingStepdefs {
     }
 
 
-
     @Then("^everyone sees the (.*?) in the (.*?)$")
     public void everyone_sees_the_message_in_the_private_group_chat(String message, String privateGroupChat) throws Throwable {
         final Chat chat = chatRoom.getChat(privateGroupChat);
@@ -114,6 +118,60 @@ public class BroadcastingStepdefs {
             assertThat(chatHistory, instanceOf(NullHistory.class));
         }
     }
+
+
+    @When("^(.*?) creates private chat with name (.*?)$")
+    public void user_creates_private_chat_with_name(final String creatorName, final String chatName) throws Throwable {
+        this.anyUser = chatRoom.getUser(creatorName);
+        this.currentPrivateGroupChat = this.anyUser.createChat(chatName, new ArrayList<>());
+
+    }
+
+    @When("^(.*?) adds (.*?) to the chat$")
+    public void user_adds_Skywalker_Jabba_and_Obi_wan_to_the_chat(final String creatorName, final String attendeesListStr) throws Throwable {
+        assert creatorName == anyUser.getNickname();
+
+        final List<String> attendees = Arrays.asList(attendeesListStr.split("\\s*(,|and)\\s*"));
+        applicantsForCurrentPrivateChat = new ArrayList<>();
+
+        for (int i = 0; i < attendees.size(); i++) {
+            final User attendee = chatRoom.getUser(attendees.get(i));
+            this.applicantsForCurrentPrivateChat.add(attendee);
+            this.currentPrivateGroupChat.addAttendee(
+                    chatRoom.getUser(creatorName),
+                    attendee
+            );
+        }
+    }
+
+
+    @Then("^these users can read messages there from each other$")
+    public void these_users_can_read_messages_there_from_each_other() throws Throwable {
+        someMessagesOfApplicants = new ArrayList<>();
+        for(User user : applicantsForCurrentPrivateChat) {
+            final String msgContent = RandomStringUtils.randomAlphanumeric(10);
+            final Message msg = user.broadcast(currentPrivateGroupChat, msgContent);
+            someMessagesOfApplicants.add(msg);
+        }
+        for(User user : applicantsForCurrentPrivateChat) {
+            final History chatHistory = user.getChatHistory(currentPrivateGroupChat.getName());
+            chatHistory.fromLastToFirst().containsAll(someMessagesOfApplicants);
+        }
+
+
+    }
+
+    @Then("^users, who are not members, cannot read the messages$")
+    public void users_who_are_not_members_cannot_read_the_messages() throws Throwable {
+        chatRoom.getUsers().stream().filter(user -> !applicantsForCurrentPrivateChat.contains(user) && user != anyUser)
+                .forEach(otherUser -> {
+                    final History chatHistory = otherUser.getChatHistory(currentPrivateGroupChat.getName());
+                    for(Message msg: someMessagesOfApplicants) {
+                        assertThat(chatHistory.fromLastToFirst().contains(msg), is(false));
+                    }
+                });
+    }
+
 
 
 }

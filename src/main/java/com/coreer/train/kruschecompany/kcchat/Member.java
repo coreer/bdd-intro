@@ -52,8 +52,8 @@ public class Member implements User {
     }
 
     @Override
-    public void broadcast(Chat chat, String message) {
-        chat.broadcast(this, message);
+    public Message broadcast(Chat chat, String message) {
+        return chat.broadcast(this, message);
     }
 
     @Override

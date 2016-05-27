@@ -34,8 +34,8 @@ public class Admin implements User {
     }
 
     @Override
-    public void broadcast(Chat chat, String message) {
-
+    public Message broadcast(Chat chat, String message) {
+        return null;
     }
 
     @Override

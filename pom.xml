@@ -14,6 +14,7 @@
         <cucumber.version>1.2.4</cucumber.version>
         <maven.compiler.version>3.3</maven.compiler.version>
         <mockito.core.version>1.10.19</mockito.core.version>
+        <org.apache.commons.lang3.version>3.4</org.apache.commons.lang3.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,13 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${org.apache.commons.lang3.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -21,16 +21,27 @@ public class Chat {
         this.attendees.addAll(attendees);
     }
 
-    public void broadcast(User sender, String message) {
+    public Message broadcast(User sender, String message) {
         final Message msg = new Message(sender, message);
         this.history.add(msg);
         for(User user : attendees) {
             user.handleMessageEvent(this, msg);
         }
+        return msg;
     }
 
     public List<User> getAttendees() {
         return attendees;
+    }
+
+    public void addAttendee(final User adder, final User attendee){
+        assert adder == creator;
+        attendees.add(attendee);
+    }
+
+    public void removeAttendee(final User adder, final User attendee){
+        assert adder == creator;
+        attendees.remove(attendee);
     }
 
     public User getCreator() {

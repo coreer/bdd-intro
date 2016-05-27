@@ -17,7 +17,7 @@ public interface User {
 
     String getNickname();
 
-    void broadcast(Chat chat, String message);
+    Message broadcast(Chat chat, String message);
 
     void handleMessageEvent(Chat chat, Message message);
 
