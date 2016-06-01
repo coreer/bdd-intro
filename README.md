@@ -1,3 +1,7 @@
+# BDD introduction presentation
+
+It's based on cucumber-java skeleton
+
 # Cucumber-Java Skeleton
 
 This is the simplest possible build script setup for Cucumber using Java.
